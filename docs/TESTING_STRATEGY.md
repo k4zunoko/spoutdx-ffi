@@ -4,13 +4,20 @@
 
 - 自動テスト（ユニットテスト/CI）は未整備
 - 動作確認用の実行ファイルで疎通を確認
-  - [examples/ping.cpp](../examples/ping.cpp)
+  - [examples/src/main.rs](../examples/src/main.rs) (Rust)
 
 ## 手動テスト手順（Windows）
 
-1. `cmake --preset msvc-debug`
-2. `cmake --build --preset msvc-debug`
-3. `out/build/msvc-debug/Debug/spoutdx_ffi_example.exe` を実行
+1. C++ シム DLL をビルド:
+   ```
+   cmake --preset msvc-debug
+   cmake --build --preset msvc-debug
+   ```
+2. Rust example を実行:
+   ```
+   cd examples
+   cargo run
+   ```
 
 期待結果:
 - バージョン文字列が表示される

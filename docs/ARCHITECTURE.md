@@ -15,7 +15,7 @@
 
 - サンプル
   - 役割: ローカル疎通（SDK バージョン/DX11 初期化）
-  - [examples/ping.cpp](../examples/ping.cpp)
+  - [examples/src/main.rs](../examples/src/main.rs) (Rust)
 
 ## ビルド構成
 

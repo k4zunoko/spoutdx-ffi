@@ -71,9 +71,3 @@ if (WIN32)
   )
 endif()
 
-# Example
-add_executable(spoutdx_ffi_example
-  examples/ping.cpp
-)
-
-target_link_libraries(spoutdx_ffi_example PRIVATE spoutdx_ffi)

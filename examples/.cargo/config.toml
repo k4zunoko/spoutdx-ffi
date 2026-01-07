@@ -1,0 +1,3 @@
+[env]
+# Ensure DLL can be found at runtime
+PATH = { value = "../../out/build/msvc-debug/Debug", relative = true }
