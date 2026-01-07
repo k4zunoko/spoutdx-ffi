@@ -1,6 +1,6 @@
 # spoutdx-ffi
 
-spoutdx-ffi は、Windows の Spout (DirectX 11) を Rust から扱うための **純 C ABI シム**です。Spout2 の必要最小ソースをビルドに統合し、C ABI のみを公開することで DLL/C++ ABI 問題を回避します。
+spoutdx-ffi は、Windows の Spout (DirectX 11) を DLL/C++ ABI 互換性問題を回避しつつ Rust から扱うための **純 C ABI シム**です。Spout2 の必要最小ソースをビルドに統合し、C ABI のみを公開することで DLL/C++ ABI 問題を回避します。
 
 ## Docs（索引）
 
