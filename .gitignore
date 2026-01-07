@@ -22,30 +22,6 @@ out/build/
 # Visual Studio / IDE files
 *.suo
 *.user
-# CMake
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake
-Makefile
-CMakeUserPresets.json
-
-# Build directories
-build/
-cmake-build-*/
-out/build/
-
-# VS Code user-specific
-.vscode/c_cpp_properties.json
-.vscode/*.code-workspace
-!.vscode/extensions.json
-!.vscode/launch.json
-!.vscode/tasks.json
-# include settings.json only if it's sanitized and shared:
-# !.vscode/settings.json
-
-# Visual Studio / IDE files
-*.suo
-*.user
 *.userosscache
 *.VC.db
 *.VC.VC.opendb
