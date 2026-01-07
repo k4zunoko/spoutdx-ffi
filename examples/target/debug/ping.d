@@ -1,1 +1,0 @@
-C:\Programs\spoutdx-ffi\examples\target\debug\ping.exe: C:\Programs\spoutdx-ffi\examples\build.rs C:\Programs\spoutdx-ffi\examples\src\main.rs C:\Programs\spoutdx-ffi\out\build\msvc-debug\Debug\spoutdx_ffi.dll
