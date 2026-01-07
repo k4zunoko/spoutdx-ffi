@@ -13,36 +13,16 @@ Spoutのソースコードを直接ビルドして統合するため、DLL ABI�
 - VS Code（推奨）
   - 拡張: C/C++ (ms-vscode.cpptools), CMake Tools (ms-vscode.cmake-tools)
 
-## Spoutソースコードの配置
+## Spoutソースコードについて
 
 **重要**: このプロジェクトは Spout のソースコードを取り込んでビルドします。
 
-### 1. Spout2 リポジトリを取得
+Spout2 のソースコード（SPOUTSDK）は `third_party/Spout2/SPOUTSDK/` に含まれており、Git管理されています。
+追加のセットアップは不要で、そのままビルドできます。
 
-```bash
-# GitHub から clone するか、リリースアーカイブをダウンロード
-git clone https://github.com/leadedge/Spout2.git
-```
-
-### 2. SPOUTSDKフォルダをコピー
-
-以下の場所に `SPOUTSDK` フォルダを配置してください：
-
-```
-spoutdx-ffi/
-└── third_party/
-    └── Spout2/
-        └── SPOUTSDK/       ← ここに配置
-            ├── SpoutGL/    (SpoutDXが依存する共通ファイル)
-            └── SpoutDirectX/
-                └── SpoutDX/
-```
-
-**必要なファイル**:
-- `SPOUTSDK/SpoutGL/SpoutCommon.h`, `SpoutCopy.*`, `SpoutDirectX.*`, `SpoutFrameCount.*`, `SpoutSenderNames.*`, `SpoutSharedMemory.*`, `SpoutUtils.*`
-- `SPOUTSDK/SpoutDirectX/SpoutDX/SpoutDX.h`, `SpoutDX.cpp`
-
-※ `.gitignore` に `third_party/Spout2/SPOUTSDK/` を追加済みなので、Git管理されません。
+**含まれているファイル**:
+- `SPOUTSDK/SpoutGL/`: SpoutDXが依存する共通ファイル
+- `SPOUTSDK/SpoutDirectX/SpoutDX/`: SpoutDX本体
 
 ## ビルド
 
@@ -71,8 +51,8 @@ cmake --build --preset msvc-debug
 - C++ 20
 - 純C ABI インターフェース（Rust FFI ready）
 
-⏳ **Spout統合（準備完了）**
-- ソースコード配置待ち: `third_party/Spout2/SPOUTSDK/`
+✅ **Spout統合**
+- Spout2ソースコードを `third_party/Spout2/SPOUTSDK/` に含む
 - ビルド後は DLL ABI 問題なし
 - 全機能がネイティブ実装として利用可能
 
