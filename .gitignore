@@ -32,8 +32,9 @@ Thumbs.db
 .DS_Store
 *.swp
 
-note.md
-
 # Examples (ignore build artifacts)
 examples/Cargo.lock
 examples/target/
+
+note.md
+dev.proxy.ps1

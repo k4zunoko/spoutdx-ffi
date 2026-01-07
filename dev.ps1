@@ -9,6 +9,22 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# ---------------------------------------------
+# Optional proxy config (NOT committed to git)
+# If the file exists, it will be dot-sourced.
+# ---------------------------------------------
+$ProxyConfigPath = Join-Path $PSScriptRoot "dev.proxy.ps1"
+if (Test-Path $ProxyConfigPath) {
+    try {
+        . $ProxyConfigPath
+        # NOTE: proxy settings are expected to be defined inside dev.proxy.ps1
+    }
+    catch {
+        Write-Host "Failed to load proxy config: $ProxyConfigPath" -ForegroundColor Red
+        throw
+    }
+}
+
 # Colors for output
 $Green = @{ ForegroundColor = "Green" }
 $Yellow = @{ ForegroundColor = "Yellow" }
@@ -53,13 +69,13 @@ if (-not $NoRebuild) {
         cmake --build --preset $Preset 2>&1
         if ($LASTEXITCODE -ne 0) { Write-Error-Exit "CMake build failed" }
         
-        Write-Host "✓ C++ DLL built successfully" @Green
+        Write-Host "[OK] C++ DLL built successfully" @Green
     }
     finally {
         Pop-Location
     }
 } else {
-    Write-Host "⊘ Skipping DLL rebuild" @Yellow
+    Write-Host "[NG] Skipping DLL rebuild" @Yellow
 }
 
 # Step 2: Run Rust Example
@@ -80,13 +96,13 @@ if ($ExampleBuild) {
             Write-Error-Exit "Example execution failed"
         }
         
-        Write-Host "`n✓ Example ran successfully" @Green
+        Write-Host "`n [OK] Example ran successfully" @Green
     }
     finally {
         Pop-Location
     }
 } else {
-    Write-Host "⊘ Skipping example execution" @Yellow
+    Write-Host "[NG] Skipping example execution" @Yellow
 }
 
 Write-Title "Build Complete!"
