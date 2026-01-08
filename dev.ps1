@@ -1,5 +1,5 @@
 # Development runner: Build DLL and run Rust example
-# Usage: .\dev.ps1 [--release] [--no-example]
+# Usage: .\dev.ps1 [-Release] [-NoExample] [-NoRebuild]
 
 param(
     [switch]$Release,
