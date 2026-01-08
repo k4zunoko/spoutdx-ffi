@@ -13,7 +13,7 @@ use windows::{
 unsafe extern "C" {
     fn spoutdx_ffi_version() -> *const c_char;
     fn spoutdx_ffi_get_sdk_version() -> c_int;
-    fn spoutdx_ffi_test_dx11_init() -> bool;
+    fn spoutdx_ffi_test_dx11_init() -> c_int;
 }
 
 // Receiver API types
@@ -78,7 +78,7 @@ fn main() {
 
         // Test DirectX 11 initialization
         print!("Testing DirectX 11 initialization... ");
-        if spoutdx_ffi_test_dx11_init() {
+        if spoutdx_ffi_test_dx11_init() != 0 {
             println!("OK");
         } else {
             println!("PENDING (awaiting Spout source integration)");
