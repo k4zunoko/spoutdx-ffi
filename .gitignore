@@ -8,7 +8,7 @@ CMakeUserPresets.json
 # Build directories
 build/
 cmake-build-*/
-out/build/
+out/
 
 # VS Code user-specific
 .vscode/c_cpp_properties.json
