@@ -1,25 +1,35 @@
 # ROADMAP
 
+## 実装済み（2026-01-08）
+
+- ✅ Receiver API の追加（C ABI）
+  - `*_create` / `*_destroy` のライフサイクル
+  - テクスチャ受信（DX11, `receive_into` 形式）
+  - センダー情報取得（名前・サイズ・フォーマット）
+  - 状態取得（is_updated, is_connected, is_frame_new）
+  - 外部デバイスでの初期化（open_dx11）
+
+- ✅ エラーハンドリング体系の確立
+  - エラーコードの固定化（SpoutDxResult enum）
+  - try/catch による例外安全性確保
+
+- ✅ Rust 側の利用例の確立
+  - windows crate を使用した D3D11 デバイス作成例
+  - FFI 経由での Receiver API 利用例
+
+  詳細: [docs/impl/RECEIVER_IMPLEMENTATION_PLAN.md](impl/RECEIVER_IMPLEMENTATION_PLAN.md)
+
 ## 近い将来（実装予定）
 
-- Receiver API の追加（C ABI）
-  - `*_create` / `*_destroy` のライフサイクル
-  - テクスチャ受信（DX11, `receive_into` を主）
-  - センダー情報取得（名前・サイズ等）
-
-- エラーハンドリング体系の確立
-  - エラーコードの固定化
-  - 必要に応じてエラー文字列取得 API
-
-- Rust 側の利用手順の確立
-
-  注: 本リポジトリは shim DLL の提供に限定し、Rust クレートは含めません。
-  利用側が必要に応じて bindings/wrapper を別途管理する前提です。
+- センダー一覧取得 API
+- フレーム同期機能（SetFrameSync, WaitFrameSync）
+- 内部デバイス生成モードのサポート
 
 ## 中期
 
 - Release ビルドの配布形態（成果物/パッケージング）整理
 - CI（ビルドの再現性チェック）
+- Sender API の追加
 
 ## 方向性メモ
 

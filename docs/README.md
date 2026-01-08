@@ -13,3 +13,7 @@
 - エラーハンドリング: [ERROR_HANDLING.md](ERROR_HANDLING.md)
 - テスト方針: [TESTING_STRATEGY.md](TESTING_STRATEGY.md)
 - 今後の計画: [ROADMAP.md](ROADMAP.md)
+
+## 実装計画
+
+- Receiver API 実装計画: [impl/RECEIVER_IMPLEMENTATION_PLAN.md](impl/RECEIVER_IMPLEMENTATION_PLAN.md)
