@@ -15,6 +15,10 @@ Spout2（SPOUTSDK）の必要最小ソースをビルドに統合し、公開 AP
 	- 接続状態/更新/新規フレームの取得
 	- センダー情報（名前/サイズ/フォーマット）の取得
 
+## 使い方（DLL 利用ガイド）
+
+- DLL を他プロジェクトから利用する際の手順・注意点: [USAGE_DLL.md](USAGE_DLL.md)
+
 ## 前提環境（Windows）
 
 - Windows 10/11（x64）
@@ -83,76 +87,3 @@ cargo run --release
 	- Debug: `examples\target\debug\ping.exe`
 	- Release: `examples\target\release\ping.exe`
 
-## 公開 C ABI
-
-公開ヘッダ: `include/spoutdx_ffi/spoutdx_ffi.h`
-
-### 既存 API
-
-- `const char* spoutdx_ffi_version(void);`
-	- バージョン文字列を返します（静的文字列）。
-- `int spoutdx_ffi_get_sdk_version(void);`
-	- Spout SDK version を返します（例: `2007` は "2.007" 相当）。
-- `int spoutdx_ffi_test_dx11_init(void);`
-	- DX11 初期化疎通（成功=1、失敗=0）。
-
-### Receiver API（受信）
-
-型:
-
-- `typedef void* SpoutDxReceiverHandle;`
-- `typedef enum SpoutDxResult { ... } SpoutDxResult;`
-- `typedef struct SpoutDxSenderInfo { char name[256]; unsigned int width; unsigned int height; unsigned int format; } SpoutDxSenderInfo;`
-
-ライフサイクル:
-
-- `SpoutDxReceiverHandle spoutdx_receiver_create(void);`
-- `int spoutdx_receiver_destroy(SpoutDxReceiverHandle handle);`
-
-DX11 初期化（呼び出し側デバイスを使用）:
-
-- `int spoutdx_receiver_open_dx11(SpoutDxReceiverHandle handle, void* device /* ID3D11Device* */);`
-- `int spoutdx_receiver_close_dx11(SpoutDxReceiverHandle handle);`
-
-受信設定:
-
-- `int spoutdx_receiver_set_sender_name(SpoutDxReceiverHandle handle, const char* sender_name);`
-	- `sender_name == NULL` の場合は active sender。
-
-受信（テクスチャへ書き込み）:
-
-- `int spoutdx_receiver_receive_texture(SpoutDxReceiverHandle handle, void* dst_texture /* ID3D11Texture2D* */);`
-- `int spoutdx_receiver_release(SpoutDxReceiverHandle handle);`
-
-状態取得:
-
-- `int spoutdx_receiver_get_sender_info(SpoutDxReceiverHandle handle, SpoutDxSenderInfo* out_info);`
-- `int spoutdx_receiver_is_updated(SpoutDxReceiverHandle handle);`
-- `int spoutdx_receiver_is_connected(SpoutDxReceiverHandle handle);`
-- `int spoutdx_receiver_is_frame_new(SpoutDxReceiverHandle handle);`
-
-### Receiver の戻り値（SpoutDxResult）
-
-Receiver API の戻り値は `0` が成功、負の値が失敗です。
-
-- `SPOUTDX_OK (0)`
-- `SPOUTDX_ERROR_NULL_HANDLE (-1)`
-- `SPOUTDX_ERROR_NULL_DEVICE (-2)`
-- `SPOUTDX_ERROR_NOT_CONNECTED (-3)`（センダーが見つからない/接続できない）
-- `SPOUTDX_ERROR_INIT_FAILED (-4)`
-- `SPOUTDX_ERROR_RECEIVE_FAILED (-5)`
-- `SPOUTDX_ERROR_INTERNAL (-99)`（例外など内部エラー）
-
-## 利用メモ（重要）
-
-- Receiver API は **呼び出し側が D3D11 デバイスと受信先テクスチャを用意**する前提です。
-- `spoutdx_receiver_receive_texture` が `SPOUTDX_ERROR_NOT_CONNECTED` を返すのは正常です（Spout sender が起動していない場合）。
-- `dst_texture` は `ID3D11Texture2D*` を渡してください（NULL は不可）。
-- `SpoutDxSenderInfo.format` は `DXGI_FORMAT` の数値です。
-
-## トラブルシュート
-
-- CMake が失敗する: Visual Studio 2022 / Build Tools と Windows SDK が入っているか確認してください（`Visual Studio 17 2022` ジェネレータを使用します）。
-- `Spout source not found...` と出る: `third_party/Spout2/SPOUTSDK/` の配置が必要です。
-- 実行時に DLL が見つからない: `spoutdx_ffi.dll` が `ping.exe` と同じフォルダにあるか確認してください（example は `build.rs` がコピーします）。
-- Release 実行で DLL パスが合わない: 既定では Cargo の `PROFILE` に合わせて Debug/Release を切り替えます。必要なら環境変数 `SPOUTDX_FFI_CMAKE_PRESET=msvc-debug|msvc-release` で上書きできます。
