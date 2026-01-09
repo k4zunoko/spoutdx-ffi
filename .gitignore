@@ -39,3 +39,4 @@ examples/*.png
 
 note.md
 dev.proxy.ps1
+dist/
