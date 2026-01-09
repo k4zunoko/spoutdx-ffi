@@ -137,6 +137,45 @@ int spoutdx_receiver_receive_texture(SpoutDxReceiverHandle handle, void* dst_tex
     }
 }
 
+int spoutdx_receiver_receive(SpoutDxReceiverHandle handle) {
+    if (!handle) return SPOUTDX_ERROR_NULL_HANDLE;
+    try {
+        auto* rx = static_cast<SpoutDxReceiver*>(handle);
+        
+        // Use ReceiveTexture() - receives to internal class texture
+        if (!rx->dx.ReceiveTexture()) {
+            if (!rx->dx.IsConnected()) {
+                return SPOUTDX_ERROR_NOT_CONNECTED;
+            }
+            return SPOUTDX_ERROR_RECEIVE_FAILED;
+        }
+        return SPOUTDX_OK;
+    } catch (...) {
+        return SPOUTDX_ERROR_INTERNAL;
+    }
+}
+
+void* spoutdx_receiver_get_received_texture(SpoutDxReceiverHandle handle) {
+    if (!handle) return nullptr;
+    try {
+        auto* rx = static_cast<SpoutDxReceiver*>(handle);
+        // GetSenderTexture returns the internally received class texture
+        return static_cast<void*>(rx->dx.GetSenderTexture());
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+void* spoutdx_receiver_get_dx11_context(SpoutDxReceiverHandle handle) {
+    if (!handle) return nullptr;
+    try {
+        auto* rx = static_cast<SpoutDxReceiver*>(handle);
+        return static_cast<void*>(rx->dx.GetDX11Context());
+    } catch (...) {
+        return nullptr;
+    }
+}
+
 int spoutdx_receiver_release(SpoutDxReceiverHandle handle) {
     if (!handle) return SPOUTDX_ERROR_NULL_HANDLE;
     try {

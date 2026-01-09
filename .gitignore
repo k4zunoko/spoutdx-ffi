@@ -35,6 +35,7 @@ Thumbs.db
 # Examples (ignore build artifacts)
 examples/Cargo.lock
 examples/target/
+examples/*.png
 
 note.md
 dev.proxy.ps1
