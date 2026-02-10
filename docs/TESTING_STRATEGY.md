@@ -257,4 +257,3 @@ jobs:
 - 手動テストコード: [examples/src/main.rs](../examples/src/main.rs)
 - ビルドスクリプト: [dev.ps1](../dev.ps1)
 - API 定義: [include/spoutdx_ffi/spoutdx_ffi.h](../include/spoutdx_ffi/spoutdx_ffi.h)
-

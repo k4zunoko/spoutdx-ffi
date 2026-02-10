@@ -221,4 +221,3 @@ SPOUTDX_FFI_API const char* spoutdx_get_last_error_message();
 - 実装: [src/spoutdx_ffi.cpp](../src/spoutdx_ffi.cpp)
 - 利用ガイド: [USAGE_DLL.md](../USAGE_DLL.md)
 - 実装計画: [impl/RECEIVER_IMPLEMENTATION_PLAN.md](impl/RECEIVER_IMPLEMENTATION_PLAN.md)
-

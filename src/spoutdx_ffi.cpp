@@ -122,7 +122,7 @@ int spoutdx_receiver_receive_texture(SpoutDxReceiverHandle handle, void* dst_tex
         auto* rx = static_cast<SpoutDxReceiver*>(handle);
         ID3D11Texture2D* pTexture = static_cast<ID3D11Texture2D*>(dst_texture);
         ID3D11Texture2D* pTexturePtr = pTexture;
-        
+
         // Use ReceiveTexture(ID3D11Texture2D**)
         // This function searches for sender and copies from shared texture to dst
         if (!rx->dx.ReceiveTexture(&pTexturePtr)) {
@@ -141,7 +141,7 @@ int spoutdx_receiver_receive(SpoutDxReceiverHandle handle) {
     if (!handle) return SPOUTDX_ERROR_NULL_HANDLE;
     try {
         auto* rx = static_cast<SpoutDxReceiver*>(handle);
-        
+
         // Use ReceiveTexture() - receives to internal class texture
         if (!rx->dx.ReceiveTexture()) {
             if (!rx->dx.IsConnected()) {
@@ -194,7 +194,7 @@ int spoutdx_receiver_get_sender_info(SpoutDxReceiverHandle handle, SpoutDxSender
     if (!out_info) return SPOUTDX_ERROR_INTERNAL;
     try {
         auto* rx = static_cast<SpoutDxReceiver*>(handle);
-        
+
         // Get sender name
         const char* name = rx->dx.GetSenderName();
         if (name) {
@@ -202,12 +202,12 @@ int spoutdx_receiver_get_sender_info(SpoutDxReceiverHandle handle, SpoutDxSender
         } else {
             out_info->name[0] = '\0';
         }
-        
+
         // Get size and format
         out_info->width = rx->dx.GetSenderWidth();
         out_info->height = rx->dx.GetSenderHeight();
         out_info->format = static_cast<unsigned int>(rx->dx.GetSenderFormat());
-        
+
         return SPOUTDX_OK;
     } catch (...) {
         return SPOUTDX_ERROR_INTERNAL;

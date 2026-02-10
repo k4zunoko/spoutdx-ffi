@@ -120,4 +120,3 @@ spoutdx-ffi は、Windows の Spout (DirectX 11) を Rust から扱うための 
 - 現在の公開 API: [include/spoutdx_ffi/spoutdx_ffi.h](../include/spoutdx_ffi/spoutdx_ffi.h)
 - ビルド統合（Spout ソース追加）: [CMakeLists.txt](../CMakeLists.txt)
 - 詳細な実装計画: [impl/RECEIVER_IMPLEMENTATION_PLAN.md](impl/RECEIVER_IMPLEMENTATION_PLAN.md)
-

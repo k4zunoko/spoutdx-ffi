@@ -329,4 +329,3 @@ SPOUTDX_FFI_API void spoutdx_free_sender_list(SpoutDxSenderList* list);
 - エラーハンドリング体系: [ERROR_HANDLING.md](ERROR_HANDLING.md)
 - テスト戦略: [TESTING_STRATEGY.md](TESTING_STRATEGY.md)
 - 詳細実装計画: [impl/RECEIVER_IMPLEMENTATION_PLAN.md](impl/RECEIVER_IMPLEMENTATION_PLAN.md)
-

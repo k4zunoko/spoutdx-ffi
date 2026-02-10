@@ -98,20 +98,20 @@ fn calculate_average_color(data: &[u8], width: u32, height: u32, row_pitch: u32)
 /// 画像診断を実行
 fn diagnose_image(data: &[u8], width: u32, height: u32, row_pitch: u32) {
     let (avg_r, avg_g, avg_b, avg_a) = calculate_average_color(data, width, height, row_pitch);
-    
+
     println!("\n  [Image Diagnostics]");
     println!("    Average color (RGBA): ({:.1}, {:.1}, {:.1}, {:.1})", avg_r, avg_g, avg_b, avg_a);
-    
+
     // 全黒チェック
     if avg_r < 1.0 && avg_g < 1.0 && avg_b < 1.0 {
         println!("    ⚠️  WARNING: Image appears to be ALL BLACK!");
     }
-    
+
     // 全白チェック
     if avg_r > 254.0 && avg_g > 254.0 && avg_b > 254.0 {
         println!("    ⚠️  WARNING: Image appears to be ALL WHITE!");
     }
-    
+
     // アルファ誤りチェック（アルファが0または非常に低い）
     if avg_a < 1.0 {
         println!("    ⚠️  WARNING: Alpha channel is near ZERO - image may be fully transparent!");
@@ -120,20 +120,20 @@ fn diagnose_image(data: &[u8], width: u32, height: u32, row_pitch: u32) {
     } else if avg_a > 254.0 {
         println!("    ✓ Alpha channel is fully opaque (expected)");
     }
-    
+
     // ガンマ/並べ替えミスチェック（極端な色偏り）
     let color_diff_rg = (avg_r - avg_g).abs();
     let color_diff_rb = (avg_r - avg_b).abs();
     let color_diff_gb = (avg_g - avg_b).abs();
-    
+
     // 極端に一色だけ違う場合は RGB/BGR 入れ替わりの可能性
     if color_diff_rg > 100.0 || color_diff_rb > 100.0 || color_diff_gb > 100.0 {
         println!("    ⚠️  NOTE: Large color channel imbalance detected");
         println!("       This could indicate RGB/BGR swap or gamma issues");
-        println!("       R-G diff: {:.1}, R-B diff: {:.1}, G-B diff: {:.1}", 
+        println!("       R-G diff: {:.1}, R-B diff: {:.1}, G-B diff: {:.1}",
                  color_diff_rg, color_diff_rb, color_diff_gb);
     }
-    
+
     // サンプルピクセル表示（四隅と中心）
     println!("\n    Sample pixels (BGRA format in memory):");
     let show_pixel = |name: &str, x: u32, y: u32| {
@@ -144,7 +144,7 @@ fn diagnose_image(data: &[u8], width: u32, height: u32, row_pitch: u32) {
         let a = data[offset + 3];
         println!("      {}: R={:3} G={:3} B={:3} A={:3}", name, r, g, b, a);
     };
-    
+
     show_pixel("Top-Left    ", 0, 0);
     show_pixel("Top-Right   ", width - 1, 0);
     show_pixel("Center      ", width / 2, height / 2);
@@ -157,27 +157,27 @@ fn save_as_png_wic(path: &Path, data: &[u8], width: u32, height: u32, row_pitch:
     unsafe {
         // COM 初期化（既に初期化されている場合は S_FALSE が返るが、ok() で無視）
         let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
-        
+
         // WIC Factory 作成
         let factory: IWICImagingFactory = CoCreateInstance(
             &CLSID_WICImagingFactory,
             None,
             CLSCTX_INPROC_SERVER,
         )?;
-        
+
         // ストリーム作成
         let stream = factory.CreateStream()?;
-        
+
         // パスを PCWSTR に変換
         let path_str = path.to_string_lossy().to_string();
         let wide_path: Vec<u16> = path_str.encode_utf16().chain(std::iter::once(0)).collect();
         const GENERIC_WRITE: u32 = 0x40000000;
         stream.InitializeFromFilename(PCWSTR(wide_path.as_ptr()), GENERIC_WRITE)?;
-        
+
         // PNG エンコーダー作成
         let encoder = factory.CreateEncoder(&GUID_ContainerFormatPng, std::ptr::null())?;
         encoder.Initialize(&stream, WICBitmapEncoderNoCache)?;
-        
+
         // フレーム作成
         let mut frame: Option<IWICBitmapFrameEncode> = None;
         let mut property_bag: Option<windows::Win32::System::Com::StructuredStorage::IPropertyBag2> = None;
@@ -185,12 +185,12 @@ fn save_as_png_wic(path: &Path, data: &[u8], width: u32, height: u32, row_pitch:
         let frame = frame.unwrap();
         frame.Initialize(property_bag.as_ref())?;
         frame.SetSize(width, height)?;
-        
+
         // ピクセルフォーマット設定（WIC は要求を変更する可能性がある）
         let requested_format = GUID_WICPixelFormat32bppRGBA;
         let mut pixel_format = requested_format;
         frame.SetPixelFormat(&mut pixel_format)?;
-        
+
         // WIC が実際に採用したフォーマットを確認
         let format_name = if pixel_format == GUID_WICPixelFormat32bppRGBA {
             "RGBA"
@@ -200,7 +200,7 @@ fn save_as_png_wic(path: &Path, data: &[u8], width: u32, height: u32, row_pitch:
             "Unknown"
         };
         println!("  [WIC] Requested: RGBA, Actual: {}", format_name);
-        
+
         // 実際のフォーマットに応じてデータを準備
         let write_data: Vec<u8> = if pixel_format == GUID_WICPixelFormat32bppBGRA {
             // WIC が BGRA を要求 → そのまま渡す（変換不要）
@@ -228,7 +228,7 @@ fn save_as_png_wic(path: &Path, data: &[u8], width: u32, height: u32, row_pitch:
             for x in 0..width {
                 let src_offset = src_row_start + (x * 4) as usize;
                 let dst_offset = dst_row_start + (x * 4) as usize;
-                
+
                     if src_offset + 3 < data.len() && dst_offset + 3 < rgba_data.len() {
                         // BGRA (memory) -> RGBA (PNG)
                         rgba_data[dst_offset] = data[src_offset + 2];     // R
@@ -240,14 +240,14 @@ fn save_as_png_wic(path: &Path, data: &[u8], width: u32, height: u32, row_pitch:
             }
             rgba_data
         };
-        
+
         // 書き込み
         frame.WritePixels(height, width * 4, &write_data)?;
         frame.Commit()?;
         encoder.Commit()?;
-        
+
         // COM は自動的に解放される（IUnknown の Drop）
-        
+
         Ok(())
     }
 }
@@ -293,38 +293,38 @@ fn read_texture_to_cpu(
         let mut src_desc = std::mem::zeroed::<D3D11_TEXTURE2D_DESC>();
         source_texture.GetDesc(&mut src_desc);
         let format = src_desc.Format;
-        
+
         let format_name = match format.0 {
             87 => "DXGI_FORMAT_B8G8R8A8_UNORM (BGRA)",
             28 => "DXGI_FORMAT_R8G8B8A8_UNORM (RGBA)",
             _ => "Unknown",
         };
         println!("  [D3D11] Source texture format: {} ({})", format.0, format_name);
-        
+
         // Staging テクスチャ作成（同じフォーマットで）
         let staging = create_staging_texture(device, width, height, format)?;
-        
+
         // GPU テクスチャから Staging テクスチャへコピー
         context.CopyResource(&staging, source_texture);
-        
+
         // GPU コマンドの完了を待つ（重要！）
         context.Flush();
-        
+
         // Map して CPU からアクセス
         let mut mapped = D3D11_MAPPED_SUBRESOURCE::default();
         context.Map(&staging, 0, D3D11_MAP_READ, 0, Some(&mut mapped))?;
-        
+
         let row_pitch = mapped.RowPitch;
         let data_size = (row_pitch * height) as usize;
-        
+
         // データをコピー
         let src_ptr = mapped.pData as *const u8;
         let mut data = vec![0u8; data_size];
         std::ptr::copy_nonoverlapping(src_ptr, data.as_mut_ptr(), data_size);
-        
+
         // Unmap
         context.Unmap(&staging, 0);
-        
+
         Ok((data, row_pitch))
     }
 }
@@ -334,7 +334,7 @@ fn main() {
         // ============================================================
         // Existing API tests
         // ============================================================
-        
+
         // Get FFI version
         let version_ptr = spoutdx_ffi_version();
         let version = CStr::from_ptr(version_ptr).to_string_lossy();
@@ -372,7 +372,7 @@ fn main() {
             D3D_FEATURE_LEVEL_11_1,
             D3D_FEATURE_LEVEL_11_0,
         ];
-        
+
         let result = D3D11CreateDevice(
             None,
             D3D_DRIVER_TYPE_HARDWARE,
@@ -423,9 +423,9 @@ fn main() {
         // 4. spoutdx_receiver_get_received_texture() で内部テクスチャを取得
         // 5. spoutdx_receiver_get_dx11_context() でコンテキストを取得してコピー
         // ============================================================
-        
+
         println!("  Probing for sender...");
-        
+
         let mut current_width = 0u32;
         let mut current_height = 0u32;
 
@@ -434,7 +434,7 @@ fn main() {
         for attempt in 1..=10 {
             // 内部テクスチャへ受信
             let receive_result = spoutdx_receiver_receive(receiver);
-            
+
             if receive_result != 0 {
                 if receive_result == -3 {
                     println!("  No sender available (SPOUTDX_ERROR_NOT_CONNECTED)");
@@ -449,7 +449,7 @@ fn main() {
 
             // センダー変更チェック（初回接続時も含む）
             let is_updated = spoutdx_receiver_is_updated(receiver);
-            
+
             // センダー情報取得（IsUpdated に関わらず）
             let mut info = std::mem::zeroed::<SpoutDxSenderInfo>();
             if spoutdx_receiver_get_sender_info(receiver, &mut info) == 0 {
@@ -498,13 +498,13 @@ fn main() {
         // 内部テクスチャとコンテキストを取得
         let received_texture_ptr = spoutdx_receiver_get_received_texture(receiver);
         let spout_context_ptr = spoutdx_receiver_get_dx11_context(receiver);
-        
+
         if received_texture_ptr.is_null() {
             println!("  Failed to get received texture");
             spoutdx_receiver_destroy(receiver);
             return;
         }
-        
+
         if spout_context_ptr.is_null() {
             println!("  Failed to get DX11 context");
             spoutdx_receiver_destroy(receiver);
@@ -517,14 +517,14 @@ fn main() {
         println!("  Copying to CPU memory (using SpoutDX context)...");
         let spout_context: ID3D11DeviceContext = std::mem::transmute(spout_context_ptr);
         let received_texture: ID3D11Texture2D = std::mem::transmute(received_texture_ptr);
-        
+
         match read_texture_to_cpu(&device, &spout_context, &received_texture, current_width, current_height) {
             Ok((data, row_pitch)) => {
                 println!("  CPU copy successful (row_pitch: {})", row_pitch);
-                
+
                 // 画像診断
                 diagnose_image(&data, current_width, current_height, row_pitch);
-                
+
                 // PNG 保存
                 let output_dir = Path::new(".");
                 let png_path = output_dir.join("spout_capture.png");
@@ -588,4 +588,3 @@ fn create_render_texture(device: &ID3D11Device, width: u32, height: u32) -> Opti
         }
     }
 }
-
